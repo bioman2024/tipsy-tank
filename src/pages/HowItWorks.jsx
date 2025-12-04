@@ -11,7 +11,7 @@ export default function HowItWorks() {
       number: '01',
       icon: Droplets,
       title: 'Choose Your Bottle',
-      description: 'Clean and rinse an empty a glass bottle. Whiskey, wine, or vodka bottles all work great. Make sure it\'s completely dry before the next step.',
+      description: 'Clean and rinse an empty a glass bottle. Whiskey, wine,vodka, or water bottles all work great. Make sure it\'s completely dry before the next step.',
       image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=400&fit=crop',
       color: '#00C2D1'
     },
