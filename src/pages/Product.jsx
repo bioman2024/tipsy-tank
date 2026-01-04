@@ -139,7 +139,7 @@ export default function Product() {
               <img
                 src={imageUrls[selectedImageIndex]}
                 alt={product.name}
-                className="w-full h-full object-contain p-4"
+                className="w-full h-full object-cover"
               />
             </div>
             
@@ -159,7 +159,7 @@ export default function Product() {
                     <img
                       src={url}
                       alt={`${product.name} ${index + 1}`}
-                      className="w-full h-full object-contain bg-white"
+                      className="w-full h-full object-cover"
                     />
                   </button>
                 ))}
