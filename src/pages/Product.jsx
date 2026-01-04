@@ -3,19 +3,21 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Check, ArrowLeft, AlertCircle, Package } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import ProductCard from '@/components/shop/ProductCard';
 import { useToast } from '@/components/ui/use-toast';
+import ImageLightbox from '@/components/product/ImageLightbox';
 
 export default function Product() {
   const urlParams = new URLSearchParams(window.location.search);
   const slug = urlParams.get('slug');
   const { toast } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
@@ -110,6 +112,16 @@ export default function Product() {
     ? product.image_urls 
     : [product.image_url || placeholderImages[product.slug] || placeholderImages['starter-kit']];
 
+  const handleLightboxNavigate = (direction) => {
+    if (typeof direction === 'number') {
+      setSelectedImageIndex(direction);
+    } else if (direction === 'prev') {
+      setSelectedImageIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
+    } else if (direction === 'next') {
+      setSelectedImageIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
+    }
+  };
+
   return (
     <div className="pt-28 pb-20">
       <div className="max-w-7xl mx-auto px-6">
@@ -135,13 +147,16 @@ export default function Product() {
             animate={{ opacity: 1, x: 0 }}
             className="relative"
           >
-            <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-50 to-purple-50 shadow-xl mb-4">
+            <button 
+              onClick={() => setLightboxOpen(true)}
+              className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-50 to-purple-50 shadow-xl mb-4 w-full cursor-zoom-in hover:opacity-90 transition-opacity"
+            >
               <img
                 src={imageUrls[selectedImageIndex]}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
-            </div>
+            </button>
             
             {/* Thumbnail Gallery */}
             {imageUrls.length > 1 && (
@@ -266,6 +281,17 @@ export default function Product() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {lightboxOpen && (
+          <ImageLightbox
+            images={imageUrls}
+            currentIndex={selectedImageIndex}
+            onClose={() => setLightboxOpen(false)}
+            onNavigate={handleLightboxNavigate}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
