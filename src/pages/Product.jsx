@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -15,6 +15,7 @@ export default function Product() {
   const urlParams = new URLSearchParams(window.location.search);
   const slug = urlParams.get('slug');
   const { toast } = useToast();
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
@@ -105,7 +106,9 @@ export default function Product() {
     );
   }
 
-  const imageUrl = product.image_url || placeholderImages[product.slug] || placeholderImages['starter-kit'];
+  const imageUrls = product.image_urls && product.image_urls.length > 0 
+    ? product.image_urls 
+    : [product.image_url || placeholderImages[product.slug] || placeholderImages['starter-kit']];
 
   return (
     <div className="pt-28 pb-20">
@@ -126,19 +129,43 @@ export default function Product() {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12 mb-20">
-          {/* Product Image */}
+          {/* Product Image Gallery */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             className="relative"
           >
-            <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-50 to-purple-50 shadow-xl">
+            <div className="aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-cyan-50 to-purple-50 shadow-xl mb-4">
               <img
-                src={imageUrl}
+                src={imageUrls[selectedImageIndex]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-4"
               />
             </div>
+            
+            {/* Thumbnail Gallery */}
+            {imageUrls.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto">
+                {imageUrls.map((url, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      selectedImageIndex === index 
+                        ? 'border-cyan-500 shadow-lg' 
+                        : 'border-gray-200 hover:border-cyan-300'
+                    }`}
+                  >
+                    <img
+                      src={url}
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-contain bg-white"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+            
             <Badge 
               className="absolute top-6 right-6 px-4 py-2 text-lg font-bold"
               style={{ backgroundColor: '#00C2D1' }}

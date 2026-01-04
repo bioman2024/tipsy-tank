@@ -14,7 +14,7 @@ export default function ProductCard({ product, onAddToCart }) {
     'ultimate-bundle': 'https://images.unsplash.com/photo-1559717865-a99cac1c95d8?w=400&h=400&fit=crop'
   };
 
-  const imageUrl = product.image_url || placeholderImages[product.slug] || 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop';
+  const imageUrl = (product.image_urls && product.image_urls[0]) || product.image_url || placeholderImages[product.slug] || 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=400&fit=crop';
 
   return (
     <motion.div
@@ -28,7 +28,7 @@ export default function ProductCard({ product, onAddToCart }) {
         <img
           src={imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
